@@ -76,6 +76,62 @@ class AuthService {
   }
 
   /**
+ * Login dengan Google
+ * @param {Object} googleUser - Data dari Google
+ * @returns {Object} { success, user, isNewUser }
+ */
+  loginWithGoogle(googleUser: { email: string; name: string; picture: string; }): {
+    success: boolean;
+    user: Omit<User, "password">;
+    isNewUser: boolean;
+  } {
+    const { email, name, picture } = googleUser;
+    const users: User[] = storageService.get(STORAGE_KEYS.USER) || [];
+    const existingUser = users.find((u) => u.email === email);
+
+    if (existingUser) {
+      const { password, ...userWithoutPassword } = existingUser;
+      const token = this.generateToken();
+      storageService.set(STORAGE_KEYS.AUTH_TOKEN, {
+        token,
+        user: userWithoutPassword,
+      });
+      return {
+        success: true,
+        user: userWithoutPassword,
+        isNewUser: false,
+      };
+    } else {
+      // User baru, auto-register
+      const newUser = {
+        id: this.generateId(),
+        email,
+        name,
+        picture, // Google profile picture
+        password: '', // No password for Google users
+        provider: 'google',
+        createdAt: new Date().toISOString(),
+      };
+
+      users.push(newUser);
+      storageService.set(STORAGE_KEYS.USER, users);
+
+      const { password, ...userWithoutPassword } = newUser;
+      const token = this.generateToken();
+      storageService.set(STORAGE_KEYS.AUTH_TOKEN, {
+        token,
+        user: userWithoutPassword,
+      });
+
+      return {
+        success: true,
+        user: userWithoutPassword,
+        isNewUser: true,
+      };
+    }
+  }
+
+  /**
    * Logout user
    */
   logout() {

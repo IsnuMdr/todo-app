@@ -15,6 +15,14 @@ export interface AuthContextType {
   };
   logout: () => void;
   isAuthenticated: () => boolean;
+  loginWithGoogle: (googleUser: {
+    email: string;
+    name: string;
+    picture: string;
+  }) => {
+    success: boolean;
+    isNewUser?: boolean;
+  };
 }
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -40,12 +48,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return AuthService.isAuthenticated();
   };
 
+  const loginWithGoogle = (googleUser: {
+    email: string;
+    name: string;
+    picture: string;
+  }) => {
+    const result = AuthService.loginWithGoogle(googleUser);
+    if (result.success) {
+      setUser(result.user);
+      return { success: true, isNewUser: result.isNewUser };
+    }
+    return { success: false };
+  };
+
   const value = {
     user,
     loading,
     loginOrRegister,
     logout,
     isAuthenticated,
+    loginWithGoogle,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

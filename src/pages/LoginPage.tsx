@@ -6,13 +6,14 @@ import { ROUTES, MESSAGES } from "@constants";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema } from "@/utils/validationSchemas";
 import { Button, Input } from "@/components/ui";
-import { GoogleIcon } from "@/components/Icons";
 import Alert from "@/components/ui/Alert";
 import { useToast } from "@/hooks/useToast";
+import { jwtDecode } from "jwt-decode";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { loginOrRegister } = useAuth();
+  const { loginOrRegister, loginWithGoogle } = useAuth();
 
   const { showSuccess, showError } = useToast();
 
@@ -33,6 +34,40 @@ const LoginPage = () => {
     },
   });
 
+  const handleGoogleSuccess = (credentialResponse: any) => {
+    try {
+      // Decode JWT token dari Google
+      type GoogleJwtPayload = {
+        email: string;
+        name: string;
+        picture: string;
+        [key: string]: any;
+      };
+      const decoded = jwtDecode<GoogleJwtPayload>(
+        credentialResponse.credential,
+      );
+
+      const googleUser = {
+        email: decoded.email,
+        name: decoded.name,
+        picture: decoded.picture,
+      };
+
+      const result = loginWithGoogle(googleUser);
+
+      if (result.success) {
+        const message = result.isNewUser
+          ? "Akun berhasil dibuat dengan Google!"
+          : "Login dengan Google berhasil!";
+        showSuccess(message);
+        navigate(ROUTES.TODOS);
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      showError(MESSAGES.LOGIN_ERROR);
+    }
+  };
+
   const onSubmit = async (data: { email: string; password: string }) => {
     const result = loginOrRegister(data.email, data.password);
 
@@ -48,6 +83,10 @@ const LoginPage = () => {
         type: "error",
       });
     }
+  };
+
+  const handleGoogleError = () => {
+    showError(MESSAGES.LOGIN_ERROR);
   };
 
   return (
@@ -111,7 +150,7 @@ const LoginPage = () => {
               type="submit"
               variant="primary"
               fullWidth
-              size="lg"
+              size="md"
               isLoading={isSubmitting}
             >
               Sign in
@@ -128,14 +167,14 @@ const LoginPage = () => {
             </div>
 
             {/* Social Login */}
-            <Button
-              type="button"
-              variant="secondary"
-              fullWidth
-              icon={GoogleIcon}
-            >
-              Sign in with Google
-            </Button>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              text="continue_with"
+              shape="rectangular"
+              size="large"
+              width="100%"
+            />
           </form>
         </div>
       </div>

@@ -106,7 +106,7 @@ const TodoListPage = () => {
       message: "Are you sure you want to delete this subtask?",
       confirmText: "Delete",
       cancelText: "Cancel",
-      variant: "danger",
+      variant: "info",
     });
 
     if (confirmed) {
