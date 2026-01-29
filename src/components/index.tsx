@@ -1,3 +1,4 @@
+export { default as ConfirmDialog } from "./ConfirmDialog";
 export { default as Modal } from "./Modal";
 export { default as Navbar } from "./Navbar";
 export { default as ProtectedRoute } from "./ProtectedRoute";

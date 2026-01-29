@@ -1,11 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import { Modal, SubTodoForm, TodoCard, TodoForm } from "@/components";
+import {
+  ConfirmDialog,
+  Modal,
+  SubTodoForm,
+  TodoCard,
+  TodoForm,
+} from "@/components";
 import { Button } from "@/components/ui";
 import { useToast } from "@/hooks/useToast";
 import { Plus } from "lucide-react";
 import TodoContext from "@/contexts/TodoContext";
 import type { Todo } from "@/types";
 import type { TodoFormData } from "@/utils/validationSchemas";
+import { useConfirm } from "@/hooks/useConfirm";
 
 const TodoListPage = () => {
   const { showSuccess, showError } = useToast();
@@ -20,6 +27,7 @@ const TodoListPage = () => {
     toggleTodoStatus,
     toggleSubTodoStatus,
   } = useContext(TodoContext)!;
+  const { confirm, confirmState, closeConfirm } = useConfirm();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -28,6 +36,8 @@ const TodoListPage = () => {
   const [selectedTodoForSubTask, setSelectedTodoForSubTask] = useState<
     string | null
   >(null);
+
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadTodos();
@@ -49,10 +59,21 @@ const TodoListPage = () => {
     showSuccess("Todo updated successfully!");
   };
 
-  const handleDeleteTodo = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this todo?")) {
-      deleteTodo(id);
-      showSuccess("Todo deleted successfully!");
+  const handleDeleteTodo = async (id: string) => {
+    const confirmed = await confirm({
+      title: "Confirm Delete",
+      message: "Are you sure you want to delete this item?",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "info",
+    });
+
+    if (confirmed) {
+      setIsDeleting(true);
+      setTimeout(() => {
+        deleteTodo(id);
+        showSuccess("Todo deleted successfully!");
+      }, 500);
     }
   };
 
@@ -79,10 +100,21 @@ const TodoListPage = () => {
     toggleSubTodoStatus!(todoId, subTodoId);
   };
 
-  const handleDeleteSubTodo = (todoId: string, subTodoId: string) => {
-    if (window.confirm("Are you sure you want to delete this subtask?")) {
-      deleteSubTodo!(todoId, subTodoId);
-      showSuccess("Subtask deleted successfully!");
+  const handleDeleteSubTodo = async (todoId: string, subTodoId: string) => {
+    const confirmed = await confirm({
+      title: "Confirm Delete",
+      message: "Are you sure you want to delete this subtask?",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "danger",
+    });
+
+    if (confirmed) {
+      setIsDeleting(true);
+      setTimeout(() => {
+        deleteSubTodo!(todoId, subTodoId);
+        showSuccess("Subtask deleted successfully!");
+      }, 500);
     }
   };
 
@@ -237,6 +269,18 @@ const TodoListPage = () => {
           }}
         />
       </Modal>
+
+      <ConfirmDialog
+        isOpen={confirmState.isOpen}
+        onClose={closeConfirm}
+        onConfirm={confirmState.onConfirm}
+        title={confirmState.title}
+        message={confirmState.message}
+        confirmText={confirmState.confirmText}
+        cancelText={confirmState.cancelText}
+        variant={confirmState.variant}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };
