@@ -7,7 +7,7 @@ import { TodoProvider } from "./contexts/TodoContext";
 import PublicRoute from "./components/PublicRoute";
 import TodosPage from "./pages/TodosPage";
 import { ToastProvider } from "./contexts/ToastContext";
-import DashboardLayout from "./components/DashboardLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 function App() {
   return (

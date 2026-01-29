@@ -1,9 +1,9 @@
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 import { ROUTES } from "@/constants";
 import { useAuth } from "@/hooks/useAuth";
 import { Outlet, useNavigate } from "react-router";
-import { DashboardIcon, TodoIcon } from "./Icons";
+import { DashboardIcon, TodoIcon } from "../components/Icons";
 
 interface MenuItem {
   id: string;
