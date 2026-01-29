@@ -39,7 +39,7 @@ const LoginPage = () => {
     if (result.success) {
       showSuccess(MESSAGES.LOGIN_SUCCESS);
       setTimeout(() => {
-        navigate(ROUTES.DASHBOARD);
+        navigate(ROUTES.TODOS);
       }, 500);
     } else {
       showError(result.error || MESSAGES.LOGIN_ERROR);

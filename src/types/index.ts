@@ -5,17 +5,19 @@ export interface User {
   createdAt: string;
 }
 
-export type TodoStatus = "pending" | "in_progress" | "completed";
-export type TodoPriority = "low" | "medium" | "high";
+export interface SubTodo {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
 export interface Todo {
   id: string;
-  title: string;
-  description: string;
-  status: TodoStatus;
-  priority: TodoPriority;
-  dueDate: string;
   userId: string;
+  title: string;
+  dateTime: string;
+  completed: boolean;
+  subTodos?: SubTodo[];
   createdAt: string;
   updatedAt: string;
 }

@@ -1,7 +1,7 @@
 import StorageService from "./StorageService";
 import AuthService from "./AuthService";
-import { STORAGE_KEYS, TODO_STATUS } from "@constants";
-import type { Todo, TodoStatus } from "@/types";
+import { STORAGE_KEYS } from "@constants";
+import type { Todo } from "@/types";
 import type { TodoFormData, TodoUpdateData } from "@/utils/validationSchemas";
 
 /**
@@ -42,13 +42,12 @@ class TodoService {
     const allTodos = StorageService.get(STORAGE_KEYS.TODOS) || [];
     const newTodo = {
       id: this.generateId(),
+      title: todoData.title,
       userId: user.id,
-      ...todoData,
-      status: todoData.status || TODO_STATUS.PENDING,
+      completed: false,
+      dateTime: todoData.dateTime,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      description: todoData.description ?? "",
-      dueDate: todoData.dueDate ?? "",
     };
 
     allTodos.push(newTodo);
@@ -112,34 +111,14 @@ class TodoService {
     const todo = this.getTodoById(id);
     if (!todo) return null;
 
-    const newStatus =
-      todo.status === TODO_STATUS.COMPLETED
-        ? TODO_STATUS.PENDING
-        : TODO_STATUS.COMPLETED;
-
-    return this.updateTodo(id, { ...todo, status: newStatus as TodoStatus });
-  }
-
-  /**
-   * Get todos statistics
-   * @returns {Object}
-   */
-  getTodosStats() {
-    const todos = this.getTodos();
-    return {
-      total: todos.length,
-      completed: todos.filter((t) => t.status === TODO_STATUS.COMPLETED).length,
-      pending: todos.filter((t) => t.status === TODO_STATUS.PENDING).length,
-      inProgress: todos.filter((t) => t.status === TODO_STATUS.IN_PROGRESS)
-        .length,
-    };
+    return this.updateTodo(id, { ...todo, completed: !todo.completed });
   }
 
   /**
    * Generate ID unik
    * @returns {string}
    */
-  generateId() {
+  generateId(): string {
     return `todo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }

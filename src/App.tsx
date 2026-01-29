@@ -5,7 +5,6 @@ import LoginPage from "./pages/LoginPage";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TodoProvider } from "./contexts/TodoContext";
 import PublicRoute from "./components/PublicRoute";
-import DashboardPage from "./pages/DashboardPage";
 import TodosPage from "./pages/TodosPage";
 import { ToastProvider } from "./contexts/ToastContext";
 import DashboardLayout from "./components/DashboardLayout";
@@ -25,7 +24,6 @@ function App() {
               {/* Protected Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route element={<DashboardLayout />}>
-                  <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
                   <Route path={ROUTES.TODOS} element={<TodosPage />} />
                 </Route>
               </Route>

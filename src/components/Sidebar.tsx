@@ -44,7 +44,7 @@ const Sidebar = ({ menuItems }: SidebarProps) => {
                     text-sm font-medium transition-colors
                     ${
                       isActive
-                        ? "bg-[#154886] text-white"
+                        ? "bg-linear-to-br from-[#1e40af] to-[#5778b8] text-white"
                         : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                     }
                   `}

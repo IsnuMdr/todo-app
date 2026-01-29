@@ -5,20 +5,6 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: "todo_app_auth_token",
 };
 
-// Todo Status
-export const TODO_STATUS = {
-  PENDING: "pending",
-  IN_PROGRESS: "in_progress",
-  COMPLETED: "completed",
-};
-
-// Todo Priority
-export const TODO_PRIORITY = {
-  LOW: "low",
-  MEDIUM: "medium",
-  HIGH: "high",
-};
-
 // Routes
 export const ROUTES = {
   HOME: "/",

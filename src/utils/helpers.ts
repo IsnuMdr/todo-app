@@ -1,3 +1,7 @@
+export const generateId = (): string => {
+  return Math.random().toString(36).substring(2, 9);
+}
+
 /**
  * Format tanggal ke format yang lebih readable
  * @param {string} dateString - ISO date string

@@ -9,11 +9,13 @@ export interface TodoContextType {
   loading: boolean;
   loadTodos: () => void;
   createTodo: (todoData: TodoFormData) => Todo;
+  createSubTodo: (todoId: string, title: string) => Todo | null;
   updateTodo: (id: string, todoData: TodoUpdateData) => Todo | null;
   deleteTodo: (id: string) => boolean;
+  deleteSubTodo?: (todoId: string, subTodoId: string) => Todo | null;
   toggleTodoStatus: (id: string) => Todo | null;
+  toggleSubTodoStatus?: (todoId: string, subTodoId: string) => Todo | null;
   getTodoById: (id: string) => Todo | null;
-  getTodosStats: () => ReturnType<typeof TodoService.getTodosStats>;
 }
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -69,6 +71,35 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const createSubTodo = (todoId: string, title: string) => {
+    try {
+      const todo = TodoService.getTodoById(todoId);
+      if (!todo) return null;
+
+      const newSubTodo = {
+        id: TodoService.generateId(),
+        title,
+        completed: false,
+      };
+
+      const updatedTodo = TodoService.updateTodo(todoId, {
+        ...todo,
+        subTodos: [...(todo.subTodos || []), newSubTodo],
+      });
+
+      if (updatedTodo) {
+        setTodos((prev) =>
+          prev.map((t) => (t.id === todoId ? updatedTodo : t)),
+        );
+      }
+
+      return updatedTodo;
+    } catch (error) {
+      console.error("Error creating sub-todo:", error);
+      throw error;
+    }
+  };
+
   const updateTodo = (id: string, todoData: TodoUpdateData) => {
     try {
       const updatedTodo = TodoService.updateTodo(id, todoData);
@@ -97,6 +128,33 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const deleteSubTodo = (todoId: string, subTodoId: string) => {
+    try {
+      const todo = TodoService.getTodoById(todoId);
+      if (!todo || !todo.subTodos) return null;
+
+      const updatedSubTodos = todo.subTodos.filter(
+        (subTodo) => subTodo.id !== subTodoId,
+      );
+
+      const updatedTodo = TodoService.updateTodo(todoId, {
+        ...todo,
+        subTodos: updatedSubTodos,
+      });
+
+      if (updatedTodo) {
+        setTodos((prev) =>
+          prev.map((t) => (t.id === todoId ? updatedTodo : t)),
+        );
+      }
+
+      return updatedTodo;
+    } catch (error) {
+      console.error("Error deleting sub-todo:", error);
+      throw error;
+    }
+  };
+
   const toggleTodoStatus = (id: string) => {
     try {
       const updatedTodo = TodoService.toggleTodoStatus(id);
@@ -112,23 +170,50 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const getTodoById = (id: string) => {
-    return todos.find((todo) => todo.id === id) || null;
+  const toggleSubTodoStatus = (todoId: string, subTodoId: string) => {
+    try {
+      const todo = TodoService.getTodoById(todoId);
+      if (!todo || !todo.subTodos) return null;
+
+      const updatedSubTodos = todo.subTodos.map((subTodo) =>
+        subTodo.id === subTodoId
+          ? { ...subTodo, completed: !subTodo.completed }
+          : subTodo,
+      );
+
+      const updatedTodo = TodoService.updateTodo(todoId, {
+        ...todo,
+        subTodos: updatedSubTodos,
+      });
+
+      if (updatedTodo) {
+        setTodos((prev) =>
+          prev.map((t) => (t.id === todoId ? updatedTodo : t)),
+        );
+      }
+
+      return updatedTodo;
+    } catch (error) {
+      console.error("Error toggling sub-todo status:", error);
+      throw error;
+    }
   };
 
-  const getTodosStats = () => {
-    return TodoService.getTodosStats();
+  const getTodoById = (id: string) => {
+    return todos.find((todo) => todo.id === id) || null;
   };
 
   const value = {
     todos,
     loading,
     createTodo,
+    createSubTodo,
     updateTodo,
     deleteTodo,
+    deleteSubTodo,
     toggleTodoStatus,
+    toggleSubTodoStatus,
     getTodoById,
-    getTodosStats,
     loadTodos,
   };
 
