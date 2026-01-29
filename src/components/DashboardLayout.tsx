@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import { ROUTES } from "@/constants";
 import { useAuth } from "@/hooks/useAuth";
 import { Outlet, useNavigate } from "react-router";
-import { Gauge, ListTodo } from "lucide-react";
+import { DashboardIcon, TodoIcon } from "./Icons";
 
 interface MenuItem {
   id: string;
@@ -21,13 +21,13 @@ const DashboardLayout = () => {
     {
       id: "dashboard",
       label: "Dashboard",
-      icon: Gauge,
+      icon: DashboardIcon,
       path: "#",
     },
     {
       id: "todos",
       label: "Todos",
-      icon: ListTodo,
+      icon: TodoIcon,
       path: ROUTES.TODOS,
     },
   ];
