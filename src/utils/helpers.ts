@@ -87,33 +87,6 @@ export const truncateText = (text: string, maxLength: number = 100): string => {
   return `${text.substring(0, maxLength)}...`;
 };
 
-/**
- * Get status color untuk MUI
- * @param {string} status - Todo status
- * @returns {string} Color name
- */
-export const getStatusColor = (status: string): string => {
-  const colors: Record<string, string> = {
-    pending: "warning",
-    in_progress: "info",
-    completed: "success",
-  };
-  return colors[status] || "default";
-};
-
-/**
- * Get priority color untuk MUI
- * @param {string} priority - Todo priority
- * @returns {string} Color name
- */
-export const getPriorityColor = (priority: string): string => {
-  const colors: Record<string, string> = {
-    low: "success",
-    medium: "warning",
-    high: "error",
-  };
-  return colors[priority] || "default";
-};
 
 /**
  * Capitalize first letter
@@ -130,15 +103,12 @@ export const capitalize = (str: string): string => {
  * @param {string} name - Full name
  * @returns {string} Initials
  */
-export const getInitials = (name: string): string => {
-  if (!name) return "";
-
-  const parts = name.trim().split(" ");
-  if (parts.length === 1) {
-    return parts[0].charAt(0).toUpperCase();
-  }
-
-  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+export const getInitials = (email: string): string => {
+  // get from email
+  if (!email) return "";
+  const namePart = email.split("@")[0];
+  const parts = namePart.split(".");
+  return parts.map(part => part.charAt(0).toUpperCase()).join("").slice(0, 2);
 };
 
 /**

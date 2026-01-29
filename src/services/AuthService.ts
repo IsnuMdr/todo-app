@@ -1,6 +1,6 @@
 import type { User } from "@types";
 import storageService from "./StorageService";
-import { STORAGE_KEYS } from "@constants";
+import { MESSAGES, STORAGE_KEYS } from "@constants";
 
 /**
  * Service untuk mengelola autentikasi
@@ -23,11 +23,15 @@ class AuthService {
   } {
     const users: User[] = storageService.get(STORAGE_KEYS.USER) || [];
     const existingUser = users.find((u) => u.email === email);
+    console.log({
+      email,
+      password,
+      existingUser
+    });
+
 
     if (existingUser) {
-      // User sudah ada, lakukan login
       if (existingUser.password === password) {
-        // Password benar
         const { password: _, ...userWithoutPassword } = existingUser;
         const token = this.generateToken();
         storageService.set(STORAGE_KEYS.AUTH_TOKEN, {
@@ -42,7 +46,7 @@ class AuthService {
       } else {
         return {
           success: false,
-          error: "Password salah!",
+          error: MESSAGES.LOGIN_ERROR,
         };
       }
     } else {

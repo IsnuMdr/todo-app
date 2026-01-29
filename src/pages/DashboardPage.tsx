@@ -1,11 +1,5 @@
 import { useMemo } from "react";
-import { Container, Grid, Paper, Typography, Box } from "@mui/material";
-import {
-  Assignment as AssignmentIcon,
-  CheckCircle as CheckCircleIcon,
-  Pending as PendingIcon,
-  HourglassEmpty as HourglassEmptyIcon,
-} from "@mui/icons-material";
+// ...existing code...
 import { useTodos } from "@/hooks/useTodos";
 import { useAuth } from "@/hooks/useAuth";
 import StatCard from "@/components/StatCard";
@@ -29,91 +23,75 @@ const DashboardPage = () => {
   }, [todos]);
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" gutterBottom>
-          Dashboard
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Selamat datang kembali, {user?.name}!
-        </Typography>
-      </Box>
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Total Todos"
-            value={stats.total}
-            icon={
-              <AssignmentIcon sx={{ fontSize: 40, color: "primary.main" }} />
-            }
-            color="primary"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Selesai"
-            value={stats.completed}
-            icon={
-              <CheckCircleIcon sx={{ fontSize: 40, color: "success.main" }} />
-            }
-            color="success"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Pending"
-            value={stats.pending}
-            icon={<PendingIcon sx={{ fontSize: 40, color: "warning.main" }} />}
-            color="warning"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            title="Dalam Progress"
-            value={stats.inProgress}
-            icon={
-              <HourglassEmptyIcon sx={{ fontSize: 40, color: "info.main" }} />
-            }
-            color="info"
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Aktivitas Terbaru
-            </Typography>
-            {todos.length === 0 ? (
-              <Box sx={{ py: 4, textAlign: "center" }}>
-                <Typography color="text.secondary">
-                  Belum ada todo. Mulai tambahkan todo pertama Anda!
-                </Typography>
-              </Box>
-            ) : (
-              <Box>
-                {todos.slice(0, 5).map((todo) => (
-                  <Box
-                    key={todo.id}
-                    sx={{
-                      py: 2,
-                      borderBottom: "1px solid",
-                      borderColor: "divider",
-                      "&:last-child": { borderBottom: "none" },
-                    }}
-                  >
-                    <Typography variant="subtitle1">{todo.title}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Status: {todo.status} | Priority: {todo.priority}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            )}
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
+    <div className="max-w-5xl mx-auto p-4">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="text-gray-600 text-lg">
+          Selamat datang kembali, {user?.email}!
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <StatCard
+          title="Total Todos"
+          value={stats.total}
+          icon={
+            <span className="material-symbols-outlined text-4xl text-blue-600">
+              list_alt
+            </span>
+          }
+          color="blue"
+        />
+        <StatCard
+          title="Selesai"
+          value={stats.completed}
+          icon={
+            <span className="material-symbols-outlined text-4xl text-green-600">
+              check_circle
+            </span>
+          }
+          color="green"
+        />
+        <StatCard
+          title="Pending"
+          value={stats.pending}
+          icon={
+            <span className="material-symbols-outlined text-4xl text-yellow-600">
+              pending
+            </span>
+          }
+          color="yellow"
+        />
+        <StatCard
+          title="Dalam Progress"
+          value={stats.inProgress}
+          icon={
+            <span className="material-symbols-outlined text-4xl text-cyan-600">
+              hourglass_empty
+            </span>
+          }
+          color="cyan"
+        />
+      </div>
+      <div className="bg-white rounded-lg shadow p-4">
+        <h2 className="text-xl font-semibold mb-4">Aktivitas Terbaru</h2>
+        {todos.length === 0 ? (
+          <div className="py-8 text-center text-gray-500">
+            Belum ada todo. Mulai tambahkan todo pertama Anda!
+          </div>
+        ) : (
+          <div>
+            {todos.slice(0, 5).map((todo) => (
+              <div key={todo.id} className="py-2 border-b last:border-b-0">
+                <div className="font-semibold">{todo.title}</div>
+                <div className="text-sm text-gray-500">
+                  Status: {todo.status} | Priority: {todo.priority}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

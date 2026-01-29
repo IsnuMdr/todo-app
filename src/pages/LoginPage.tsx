@@ -2,30 +2,24 @@ import { useState } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Container,
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
-import {
-  Visibility,
-  VisibilityOff,
-  Login as LoginIcon,
-} from "@mui/icons-material";
 import { ROUTES, MESSAGES } from "@constants";
 import { useAuth } from "@/hooks/useAuth";
 import { loginSchema } from "@/utils/validationSchemas";
+import { Button, Input } from "@/components/ui";
+import { GoogleIcon } from "@/components/Icons";
+import Alert from "@/components/ui/Alert";
+import { useToast } from "@/hooks/useToast";
 
 const LoginPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { loginOrRegister } = useAuth();
+
+  const { showSuccess, showError } = useToast();
+
+  const [showNotification, setShowNotification] = useState({
+    message: "",
+    type: "" as "success" | "error" | "",
+  });
 
   const {
     register,
@@ -40,110 +34,112 @@ const LoginPage = () => {
   });
 
   const onSubmit = async (data: { email: string; password: string }) => {
-    const success = loginOrRegister(data.email, data.password);
+    const result = loginOrRegister(data.email, data.password);
 
-    // if (success) {
-    //   showNotification(MESSAGES.LOGIN_SUCCESS, "success");
-    //   setTimeout(() => {
-    //     navigate(ROUTES.DASHBOARD);
-    //   }, 500);
-    // } else {
-    //   showNotification(MESSAGES.LOGIN_ERROR, "error");
-    // }
+    if (result.success) {
+      showSuccess(MESSAGES.LOGIN_SUCCESS);
+      setTimeout(() => {
+        navigate(ROUTES.DASHBOARD);
+      }, 500);
+    } else {
+      showError(result.error || MESSAGES.LOGIN_ERROR);
+      setShowNotification({
+        message: result.error || MESSAGES.LOGIN_ERROR,
+        type: "error",
+      });
+    }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          minHeight: "100vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Paper elevation={3} sx={{ p: 4, width: "100%" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <LoginIcon sx={{ fontSize: 48, color: "primary.main", mb: 2 }} />
-            <Typography component="h1" variant="h5" gutterBottom>
-              Login
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Masuk ke akun Anda
-            </Typography>
+    <div className="min-h-screen flex">
+      {/* Left Side - Illustration Only */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#F8FAFF] items-center justify-center">
+        <div className="w-full max-w-4xl">
+          <img
+            src="./login-illustration.png"
+            alt="Login Illustration"
+            className="w-full h-auto object-contain"
+          />
+        </div>
+      </div>
 
-            <Box
-              component="form"
-              onSubmit={handleSubmit(onSubmit)}
-              sx={{ width: "100%" }}
+      {/* Right Side - Form Section */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-xl">
+          {showNotification.message && (
+            <Alert
+              className="mb-3"
+              variant={
+                showNotification.type === "success" ? "success" : "error"
+              }
+              onClose={() => setShowNotification({ message: "", type: "" })}
             >
-              <TextField
-                margin="normal"
-                fullWidth
-                id="email"
-                label="Email"
-                autoComplete="email"
-                autoFocus
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                {...register("email")}
-              />
+              {showNotification.message}
+            </Alert>
+          )}
+          {/* Greeting */}
+          <h1 className="text-4xl font-semibold text-gray-900 mb-5">
+            Welcome back
+          </h1>
 
-              <TextField
-                margin="normal"
-                fullWidth
+          {/* Login Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            {/* Email Input */}
+            <Input
+              label="Email"
+              type="email"
+              placeholder="name@example.com"
+              error={errors.email?.message}
+              required
+              {...register("email")}
+            />
+
+            {/* Password Input */}
+            <div className="relative">
+              <Input
                 label="Password"
-                type={showPassword ? "text" : "password"}
-                id="password"
-                autoComplete="current-password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
+                type="password"
+                placeholder="Enter your password"
+                error={errors.password?.message}
+                required
                 {...register("password")}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={() => setShowPassword(!showPassword)}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
               />
+            </div>
 
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Loading..." : "Login"}
-              </Button>
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              size="lg"
+              isLoading={isSubmitting}
+            >
+              Sign in
+            </Button>
 
-              <Box sx={{ textAlign: "center" }}>
-                <Typography variant="body2">
-                  Belum punya akun?{" "}
-                  <Link component={RouterLink} to={ROUTES.REGISTER}>
-                    Daftar di sini
-                  </Link>
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500">Or</span>
+              </div>
+            </div>
+
+            {/* Social Login */}
+            <Button
+              type="button"
+              variant="secondary"
+              fullWidth
+              icon={GoogleIcon}
+            >
+              Sign in with Google
+            </Button>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 };
 

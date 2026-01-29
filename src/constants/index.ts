@@ -23,10 +23,8 @@ export const TODO_PRIORITY = {
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
-  REGISTER: "/register",
   DASHBOARD: "/dashboard",
   TODOS: "/todos",
-  PROFILE: "/profile",
 };
 
 // Messages
