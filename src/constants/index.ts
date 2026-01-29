@@ -9,7 +9,6 @@ export const STORAGE_KEYS = {
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
-  DASHBOARD: "/dashboard",
   TODOS: "/todos",
 };
 

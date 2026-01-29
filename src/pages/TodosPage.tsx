@@ -112,68 +112,77 @@ const TodoListPage = () => {
       </div>
 
       {/* Todo Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Active Todos */}
-        <div className="border border-gray-300 rounded-lg p-4">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Not Checked</h2>
+      {todos.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12">
+          <img src="/todo-empty.png" alt="No todos" className="w-64 mb-4" />
+          <p className="text-gray-500">You Dont Have a Todo Yet</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Active Todos */}
+          <div className="border border-gray-300 rounded-lg p-4">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Not Checked
+              </h2>
+            </div>
+
+            <div className="space-y-3">
+              {activeTodos.length > 0 ? (
+                activeTodos.map((todo) => (
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    onToggleComplete={handleToggleComplete}
+                    onEdit={handleOpenEditModal}
+                    onDelete={handleDeleteTodo}
+                    onCreateSubTodo={handleCreateSubTodo}
+                    onToggleSubTodoComplete={handleToggleSubTodoComplete}
+                    onDeleteSubTodo={handleDeleteSubTodo}
+                  />
+                ))
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                  <p className="text-gray-500">No active tasks</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Create a new task to get started
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-3">
-            {activeTodos.length > 0 ? (
-              activeTodos.map((todo) => (
-                <TodoCard
-                  key={todo.id}
-                  todo={todo}
-                  onToggleComplete={handleToggleComplete}
-                  onEdit={handleOpenEditModal}
-                  onDelete={handleDeleteTodo}
-                  onCreateSubTodo={handleCreateSubTodo}
-                  onToggleSubTodoComplete={handleToggleSubTodoComplete}
-                  onDeleteSubTodo={handleDeleteSubTodo}
-                />
-              ))
-            ) : (
-              <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                <p className="text-gray-500">No active tasks</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Create a new task to get started
-                </p>
-              </div>
-            )}
+          <div className="border border-gray-300 rounded-lg p-4">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-900">Checked</h2>
+            </div>
+
+            <div className="space-y-3">
+              {checkedTodos.length > 0 ? (
+                checkedTodos.map((todo) => (
+                  <TodoCard
+                    key={todo.id}
+                    todo={todo}
+                    onToggleComplete={handleToggleComplete}
+                    onEdit={handleOpenEditModal}
+                    onDelete={handleDeleteTodo}
+                    onCreateSubTodo={handleCreateSubTodo}
+                    onToggleSubTodoComplete={handleToggleSubTodoComplete}
+                    onDeleteSubTodo={handleDeleteSubTodo}
+                  />
+                ))
+              ) : (
+                <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                  <p className="text-gray-500">No completed tasks</p>
+                  <p className="text-sm text-gray-400 mt-1">
+                    Complete a task to see it here
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        <div className="border border-gray-300 rounded-lg p-4">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Checked</h2>
-          </div>
-
-          <div className="space-y-3">
-            {checkedTodos.length > 0 ? (
-              checkedTodos.map((todo) => (
-                <TodoCard
-                  key={todo.id}
-                  todo={todo}
-                  onToggleComplete={handleToggleComplete}
-                  onEdit={handleOpenEditModal}
-                  onDelete={handleDeleteTodo}
-                  onCreateSubTodo={handleCreateSubTodo}
-                  onToggleSubTodoComplete={handleToggleSubTodoComplete}
-                  onDeleteSubTodo={handleDeleteSubTodo}
-                />
-              ))
-            ) : (
-              <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">
-                <p className="text-gray-500">No completed tasks</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Complete a task to see it here
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Create Todo Modal */}
       <Modal

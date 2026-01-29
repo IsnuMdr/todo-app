@@ -42,13 +42,13 @@ const Button = ({
       disabled:hover:bg-[#154886]
     `,
     secondary: `
-      bg-white
-      hover:bg-gray-50
-      active:bg-gray-100
-      text-gray-900
+      bg-[#E3E8EF]
+      hover:bg-[#CBD2E1]
+      active:bg-[#A9B6CE]
+      text-[#154886]
       border border-gray-300
       shadow-sm
-      focus:ring-gray-400/50
+      focus:ring-[#154886]/50
       disabled:hover:bg-white
     `,
     outline: `
@@ -82,9 +82,9 @@ const Button = ({
   };
 
   const sizes = {
-    sm: "px-3 py-1.5 text-sm gap-1.5",
-    md: "px-4 py-2.5 text-sm gap-2",
-    lg: "px-5 py-3 text-base gap-2",
+    sm: "px-4 py-2 text-sm gap-2", // wider than before
+    md: "px-6 py-3 text-sm gap-2.5", // wider than before
+    lg: "px-7 py-3.5 text-base gap-3", // wider than before
   };
 
   const iconSizes = {
@@ -101,6 +101,7 @@ const Button = ({
         ${variants[variant]}
         ${sizes[size]}
         ${className} hover:cursor-pointer focus:border-none
+        ${Icon ? "flex justify-between" : "justify-center"}
       `}
       disabled={disabled || isLoading}
       {...props}
