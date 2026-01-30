@@ -201,9 +201,9 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
           : subTodo,
       );
 
-      // If any subTodo is unchecked, main todo must be unchecked
+      // If all subTodos are checked, main todo must be checked
       const allSubCompleted = updatedSubTodos.every((st) => st.completed);
-      const mainCompleted = allSubCompleted ? todo.completed : false;
+      const mainCompleted = allSubCompleted ? true : false;
 
       const updatedTodo = TodoService.updateTodo(todoId, {
         ...todo,
