@@ -104,20 +104,20 @@ const LoginPage = () => {
       {/* Right Side - Form Section */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white relative overflow-hidden">
         {/* Top Right Float */}
-        <div className="absolute top-0 right-0 w-32 h-32 lg:w-40 lg:h-40 pointer-events-none">
+        <div className="absolute -top-5 right-3 h-50 wh-50 lg:w-52 lg:h-52 pointer-events-none">
           <img
             src="./float-element.png"
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </div>
 
         {/* Bottom Left Float */}
-        <div className="absolute bottom-0 left-0 w-32 h-32 lg:w-40 lg:h-40 pointer-events-none">
+        <div className="absolute -bottom-10 -left-10 h-42 wh-42 lg:w-52 lg:h-52 pointer-events-none">
           <img
             src="./float-element-left.png"
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
           />
         </div>
 

@@ -6,7 +6,7 @@ const PublicRoute = () => {
   // redirect to main layout if user is already logged in
   const { user } = useAuth();
   if (user) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
+    return <Navigate to={ROUTES.TODOS} replace />;
   }
   return <Outlet />;
 };

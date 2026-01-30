@@ -1,10 +1,12 @@
 import { useContext } from "react";
-import { useForm } from "react-hook-form";
+import dayjs from "dayjs";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button } from "./ui";
 import TodoContext from "@/contexts/TodoContext";
 import { todoSchema } from "@/utils/validationSchemas";
 import type { TodoFormData } from "@/utils/validationSchemas";
+import CustomDateTimePicker from "./DateTimePicker";
 
 interface TodoFormProps {
   initialData?: TodoFormData;
@@ -25,10 +27,14 @@ const TodoForm = ({
     handleSubmit,
     formState: { errors, isSubmitting: rhfSubmitting },
     reset,
+    setValue,
+    control,
   } = useForm<TodoFormData>({
     resolver: zodResolver(todoSchema),
     defaultValues: initialData || { title: "", dateTime: "" },
   });
+
+  const dateTimeValue = useWatch({ control, name: "dateTime" });
 
   const submitHandler = async (data: TodoFormData) => {
     if (onSubmit) {
@@ -48,13 +54,18 @@ const TodoForm = ({
         autoFocus
         {...register("title")}
         error={errors.title?.message}
+        required
       />
 
-      <Input
-        label="Date & Time"
-        type="datetime-local"
-        {...register("dateTime")}
-        error={errors.dateTime?.message}
+      <CustomDateTimePicker
+        label="Datetime"
+        value={dateTimeValue ? dayjs(dateTimeValue) : null}
+        onChange={(value) => {
+          setValue("dateTime", value ? value.toISOString() : "");
+        }}
+        error={!!errors.dateTime}
+        errorMessage={errors.dateTime?.message}
+        required
       />
 
       <div className="flex justify-end gap-3 pt-4">
