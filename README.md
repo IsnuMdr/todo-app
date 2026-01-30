@@ -6,11 +6,11 @@
 
 ## 🚀 Features
 
-- **Authentication**: Login, protected routes.
+- **Authentication**: Login with Google, protected routes.
 - **Todo Management**: Add, edit, delete todos & subtodos.
 - **Date Picker**: Easily select deadlines.
 - **Modern UI**: Built with Material UI and custom components.
-- **Local Storage**: Data is saved in localStorage.
+- **Persistent Storage**: Data is saved in localStorage or Supabase.
 
 ---
 
@@ -41,7 +41,7 @@ The app will be available at [http://localhost:5173](http://localhost:5173)
 
 ## ⚙️ Configuration
 
-- **Environment**: No special environment configuration needed. All data is stored in localStorage.
+- **Environment Variables**: The app now uses environment variables for configuration. Create a `.env` file in the root directory and set the required variables (see `.env.example` if available). You will need to provide keys such as Supabase credentials and your Google OAuth client ID.
 - **Port**: Default Vite port is 5173. Change in `vite.config.ts` if needed.
 - **Main dependencies**:
   - React, React DOM
@@ -49,6 +49,10 @@ The app will be available at [http://localhost:5173](http://localhost:5173)
   - Vite
   - Material UI (`@mui/material`, `@mui/x-date-pickers`, `@emotion/react`, `@emotion/styled`)
   - dayjs
+
+### Google Authentication
+
+To enable Google authentication, set up a Google OAuth client and add the client ID to your `.env` file. The app uses Google Sign-In for user authentication. Users can log in with their Google accounts.
 
 ---
 

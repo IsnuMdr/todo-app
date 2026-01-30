@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { AuthService } from "@services";
 import type { User } from "@/types";
 
@@ -14,22 +14,53 @@ export interface AuthContextType {
     isNewUser?: boolean;
     error?: string;
   };
-  logout: () => void;
+  logout: () => Promise<void>;
   isAuthenticated: () => boolean;
-  loginWithGoogle: (googleUser: {
-    email: string;
-    name: string;
-    picture: string;
-  }) => {
+  loginWithGoogle: () => Promise<{
     success: boolean;
-    isNewUser?: boolean;
-  };
+    error?: string;
+  }>;
 }
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState(() => AuthService.getCurrentUser() || null);
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<Omit<User, "password"> | null>(
+    () => AuthService.getCurrentUser() || null,
+  );
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Sync session saat app load
+    const initAuth = async () => {
+      console.log("Initializing auth...");
+      const result = await AuthService.syncSupabaseSession();
+
+      if (result.success && result.user) {
+        console.log("User logged in:", result.user.email);
+        setUser(result.user);
+      } else {
+        console.log("No active session");
+      }
+
+      setLoading(false);
+    };
+
+    initAuth();
+
+    // Setup auth state listener
+    const {
+      data: { subscription },
+    } = AuthService.setupAuthListener((user) => {
+      console.log("Auth listener triggered, user:", user?.email);
+      setUser(user);
+    });
+
+    // Cleanup
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
 
   const loginOrRegister = (email: string, password: string) => {
     const result = AuthService.loginOrRegister(email, password);
@@ -40,8 +71,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { success: false, error: result.error };
   };
 
-  const logout = () => {
-    AuthService.logout();
+  const logout = async () => {
+    await AuthService.logout();
     setUser(null);
   };
 
@@ -49,17 +80,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return AuthService.isAuthenticated();
   };
 
-  const loginWithGoogle = (googleUser: {
-    email: string;
-    name: string;
-    picture: string;
-  }) => {
-    const result = AuthService.loginWithGoogle(googleUser);
-    if (result.success) {
-      setUser(result.user);
-      return { success: true, isNewUser: result.isNewUser };
-    }
-    return { success: false };
+  const loginWithGoogle = async () => {
+    const result = await AuthService.loginWithGoogle();
+    return result;
   };
 
   const value = {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,12 +8,16 @@ import { loginSchema } from "@/utils/validationSchemas";
 import { Button, Input } from "@/components/ui";
 import Alert from "@/components/ui/Alert";
 import { useToast } from "@/hooks/useToast";
-import { jwtDecode } from "jwt-decode";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleIcon } from "@/components/Icons";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { loginOrRegister, loginWithGoogle } = useAuth();
+  const {
+    user,
+    loading: authLoading,
+    loginOrRegister,
+    loginWithGoogle,
+  } = useAuth();
 
   const { showSuccess, showError } = useToast();
 
@@ -21,6 +25,7 @@ const LoginPage = () => {
     message: "",
     type: "" as "success" | "error" | "",
   });
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -34,37 +39,42 @@ const LoginPage = () => {
     },
   });
 
-  const handleGoogleSuccess = (credentialResponse: any) => {
+  // Auto redirect jika user sudah login
+  useEffect(() => {
+    if (!authLoading && user) {
+      console.log("User detected, redirecting to todos...", user.email);
+      showSuccess(MESSAGES.LOGIN_SUCCESS);
+
+      // Small delay to show success message
+      setTimeout(() => {
+        navigate(ROUTES.TODOS, { replace: true });
+      }, 500);
+    }
+  }, [user, authLoading, navigate, showSuccess]);
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
-      // Decode JWT token dari Google
-      type GoogleJwtPayload = {
-        email: string;
-        name: string;
-        picture: string;
-        [key: string]: any;
-      };
-      const decoded = jwtDecode<GoogleJwtPayload>(
-        credentialResponse.credential,
-      );
+      const result = await loginWithGoogle();
 
-      const googleUser = {
-        email: decoded.email,
-        name: decoded.name,
-        picture: decoded.picture,
-      };
-
-      const result = loginWithGoogle(googleUser);
-
-      if (result.success) {
-        const message = result.isNewUser
-          ? "Akun berhasil dibuat dengan Google!"
-          : "Login dengan Google berhasil!";
-        showSuccess(message);
-        navigate(ROUTES.TODOS);
+      if (!result.success) {
+        showError(result.error || MESSAGES.LOGIN_ERROR);
+        setShowNotification({
+          message: result.error || MESSAGES.LOGIN_ERROR,
+          type: "error",
+        });
+        setLoading(false);
       }
+      // Jika success, browser akan redirect ke Google OAuth
+      // Setelah kembali, useEffect akan handle redirect ke /todos
     } catch (error) {
       console.error("Google login error:", error);
       showError(MESSAGES.LOGIN_ERROR);
+      setShowNotification({
+        message: MESSAGES.LOGIN_ERROR,
+        type: "error",
+      });
+      setLoading(false);
     }
   };
 
@@ -85,12 +95,21 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleError = () => {
-    showError(MESSAGES.LOGIN_ERROR);
-  };
+  // Show loading state saat auth sedang initialize
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex">
+      {/* Left Side - Illustration */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#F8FAFF] items-center justify-center">
         <div className="w-full max-w-4xl">
           <img
@@ -185,14 +204,19 @@ const LoginPage = () => {
             </div>
 
             {/* Social Login */}
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleError}
-              text="continue_with"
-              shape="rectangular"
-              size="large"
-              width="100%"
-            />
+            <Button
+              type="button"
+              variant="outline"
+              fullWidth
+              size="md"
+              onClick={handleGoogleLogin}
+              isLoading={loading}
+            >
+              <div className="flex items-center justify-center space-x-3">
+                <GoogleIcon className="w-5 h-5" />
+                <span>Continue with Google</span>
+              </div>
+            </Button>
           </form>
         </div>
       </div>
