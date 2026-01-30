@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatDateShort } from "@/utils";
+import { formatDate } from "@/utils";
 import { Check, Edit2, EllipsisVertical, Plus, Trash } from "lucide-react";
 import type { Todo } from "@/types";
 
@@ -74,7 +74,7 @@ const TodoCard = ({
                   }
                 >
                   {isOverdue(todo.dateTime) && "Overdue - "}
-                  {formatDateShort(todo.dateTime)}
+                  {formatDate(todo.dateTime)}
                 </span>
               </div>
 

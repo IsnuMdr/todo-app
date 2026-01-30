@@ -41,25 +41,7 @@ function CustomDateTimePicker(props: Props) {
         slotProps={{
           textField: {
             fullWidth: true,
-            error: error,
-            helperText: error ? errorMessage : undefined,
             onClick: () => setOpen(true),
-            style: { cursor: "pointer" },
-            InputProps: {
-              className:
-                "w-full px-4 rounded-lg border py-2 transition focus:border-2 focus:border-blue-500 focus:outline-none focus:ring-transparent " +
-                (error ? "border-red-500" : "border-gray-300"),
-              sx: {
-                "& svg": {
-                  fontSize: 20,
-                  width: 20,
-                  height: 20,
-                },
-              },
-            },
-            inputProps: {
-              className: "px-0 py-0 h-auto text-base",
-            },
           },
           popper: {
             sx: {
@@ -86,8 +68,33 @@ function CustomDateTimePicker(props: Props) {
             {
               borderColor: "#f44336",
             },
+          "& .MuiPickersInputBase-root": {
+            height: "40px",
+            cursor: "pointer",
+            borderRadius: "8px",
+          },
+          "& .MuiInputBase-input": {
+            padding: "8px 16px", // py-2 px-4
+            fontSize: "16px",
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#d1d5db", // gray-300
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#2563eb", // blue-600
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderWidth: "2px",
+            borderColor: "#2563eb",
+          },
+          "&.Mui-error .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#ef4444",
+          },
         }}
       />
+      {error && errorMessage && (
+        <div className="text-red-500 text-sm mt-1">{errorMessage}</div>
+      )}
     </LocalizationProvider>
   );
 }

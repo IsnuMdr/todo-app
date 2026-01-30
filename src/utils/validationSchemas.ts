@@ -25,7 +25,7 @@ export const todoSchema = z.object({
     .string()
     .refine(
       (date) => {
-        if (!date) return true;
+        if (!date) return false;
         return !isNaN(Date.parse(date));
       },
       { message: "Format tanggal tidak valid" },

@@ -23,12 +23,6 @@ class AuthService {
   } {
     const users: User[] = storageService.get(STORAGE_KEYS.USER) || [];
     const existingUser = users.find((u) => u.email === email);
-    console.log({
-      email,
-      password,
-      existingUser
-    });
-
 
     if (existingUser) {
       if (existingUser.password === password) {
