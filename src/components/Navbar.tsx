@@ -3,10 +3,11 @@ import { LogoutIcon, SearchIcon } from "./Icons";
 
 interface NavbarProps {
   onLogout: () => void;
-  onSearch?: (query: string) => void;
+  onSearch?: (q: string) => void;
+  onSidebarToggle?: () => void;
 }
 
-const Navbar = ({ onLogout, onSearch }: NavbarProps) => {
+const Navbar = ({ onLogout, onSearch, onSidebarToggle }: NavbarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -37,8 +38,30 @@ const Navbar = ({ onLogout, onSearch }: NavbarProps) => {
   };
 
   return (
-    <nav className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between">
-      <div className="flex items-center gap-4 w-full">
+    <nav className="h-16 bg-white border-b border-gray-200 px-4 sm:px-6 flex items-center justify-between">
+      {/* Sidebar toggle for mobile */}
+      <div className="flex items-center gap-2 w-full">
+        {onSidebarToggle && (
+          <button
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-600 focus:outline-none"
+            onClick={onSidebarToggle}
+            aria-label="Open sidebar"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        )}
         <div className="relative w-full flex-1">
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
           <input
@@ -69,7 +92,7 @@ const Navbar = ({ onLogout, onSearch }: NavbarProps) => {
           <img src="./calendar.svg" alt="Calendar" className="w-5 h-5" />
         </button>
 
-        <div className="relative " ref={dropdownRef}>
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="

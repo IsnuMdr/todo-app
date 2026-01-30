@@ -10,22 +10,53 @@ interface MenuItem {
 
 interface SidebarProps {
   menuItems: MenuItem[];
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-const Sidebar = ({ menuItems }: SidebarProps) => {
+const Sidebar = ({ menuItems, isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
 
+  // Responsive sidebar classes
+  const sidebarBase =
+    "fixed md:static left-0 top-0 z-30 md:z-auto w-64 bg-white border-r border-gray-200 flex flex-col h-full md:h-screen transition-transform duration-200 ease-in-out";
+  const sidebarOpen = isOpen
+    ? "translate-x-0"
+    : "-translate-x-full md:translate-x-0";
+
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen">
+    <aside className={`${sidebarBase} ${sidebarOpen}`}>
       {/* Logo & Settings */}
-      <div className="h-24 px-6 flex items-center justify-between">
-        <img src="./logo.png" alt="Logo" className="h-12 w-auto" />
+      <div className="h-20 px-6 flex items-center justify-between border-b border-gray-100 relative">
+        <img src="./logo.png" alt="Logo" className="h-10 w-auto" />
         <button
           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
           aria-label="Settings"
         >
           <img src="./setting.svg" alt="Settings" className="w-5 h-5" />
         </button>
+        {/* Close button for mobile */}
+        {onClose && (
+          <button
+            className="absolute right-2 top-2 md:hidden p-2 rounded-full hover:bg-gray-100 text-gray-500"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* Menu List */}
@@ -49,7 +80,7 @@ const Sidebar = ({ menuItems }: SidebarProps) => {
                     }
                   `}
                 >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
+                  <Icon className="w-5 h-5 shrink-0" />
                   <span className="flex-1">{item.label}</span>
                   {item.badge !== undefined && item.badge > 0 && (
                     <span

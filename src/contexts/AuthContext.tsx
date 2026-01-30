@@ -33,11 +33,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Sync session saat app load
     const initAuth = async () => {
-      console.log("Initializing auth...");
       const result = await AuthService.syncSupabaseSession();
 
       if (result.success && result.user) {
-        console.log("User logged in:", result.user.email);
         setUser(result.user);
       } else {
         console.log("No active session");
@@ -52,7 +50,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       data: { subscription },
     } = AuthService.setupAuthListener((user) => {
-      console.log("Auth listener triggered, user:", user?.email);
       setUser(user);
     });
 
