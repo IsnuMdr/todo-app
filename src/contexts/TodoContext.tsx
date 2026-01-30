@@ -162,7 +162,21 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
 
   const toggleTodoStatus = (id: string) => {
     try {
-      const updatedTodo = TodoService.toggleTodoStatus(id);
+      const todo = TodoService.getTodoById(id);
+      if (!todo) return null;
+      const willBeCompleted = !todo.completed;
+      let updatedSubTodos = todo.subTodos;
+      if (willBeCompleted && todo.subTodos && todo.subTodos.length > 0) {
+        updatedSubTodos = todo.subTodos.map((subTodo) => ({
+          ...subTodo,
+          completed: true,
+        }));
+      }
+      const updatedTodo = TodoService.updateTodo(id, {
+        ...todo,
+        completed: willBeCompleted,
+        subTodos: updatedSubTodos,
+      });
       if (updatedTodo) {
         setTodos((prev) =>
           prev.map((todo) => (todo.id === id ? updatedTodo : todo)),

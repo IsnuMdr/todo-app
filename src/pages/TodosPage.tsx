@@ -117,12 +117,12 @@ const TodoListPage = () => {
   const activeTodos = todos
     .filter((todo) => !todo.completed)
     .sort(
-      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
+      (a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime(),
     );
   const checkedTodos = todos
     .filter((todo) => todo.completed)
     .sort(
-      (a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime(),
+      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
     );
 
   return (
