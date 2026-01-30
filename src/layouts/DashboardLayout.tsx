@@ -14,7 +14,7 @@ interface MenuItem {
 }
 
 const DashboardLayout = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const menuItems: MenuItem[] = [

@@ -88,7 +88,6 @@ const ConfirmDialog = ({
   };
 
   const config = variants[variant];
-  const Icon = config.icon;
 
   const handleConfirm = () => {
     onConfirm();

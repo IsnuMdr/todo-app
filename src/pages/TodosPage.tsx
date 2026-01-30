@@ -15,7 +15,7 @@ import type { TodoFormData } from "@/utils/validationSchemas";
 import { useConfirm } from "@/hooks/useConfirm";
 
 const TodoListPage = () => {
-  const { showSuccess, showError } = useToast();
+  const { showSuccess } = useToast();
   const {
     todos,
     loadTodos,
