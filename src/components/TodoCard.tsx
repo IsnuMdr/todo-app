@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { formatDate } from "@/utils";
-import { Check, Edit2, EllipsisVertical, Plus, Trash } from "lucide-react";
+import { Check, EllipsisVertical, Trash } from "lucide-react";
 import type { Todo } from "@/types";
 
 interface TodoCardProps {
@@ -20,7 +20,6 @@ const TodoCard = ({
   onToggleComplete,
   onEdit,
   onDelete,
-  onCreateSubTodo,
   onToggleSubTodoComplete,
   onDeleteSubTodo,
   onAddSubTodo,
