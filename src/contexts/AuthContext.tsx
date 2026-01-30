@@ -1,10 +1,11 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { AuthService } from "@services";
 import type { User } from "@/types";
 
 export interface AuthContextType {
   user: Omit<User, "password"> | null;
   loading: boolean;
+  setLoading: (loading: boolean) => void;
   loginOrRegister: (
     email: string,
     password: string,
@@ -28,7 +29,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(() => AuthService.getCurrentUser() || null);
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const loginOrRegister = (email: string, password: string) => {
     const result = AuthService.loginOrRegister(email, password);
@@ -64,6 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     user,
     loading,
+    setLoading,
     loginOrRegister,
     logout,
     isAuthenticated,

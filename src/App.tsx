@@ -11,12 +11,12 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const GOOGLE_CLIENT_ID =
-  "808034538162-nubsf22bljihm2pidrj4f9gpvbsggheg.apps.googleusercontent.com";
+  "808034538162-ofeinsfmj3ivqvt59u9cifu5tj4ot31g.apps.googleusercontent.com";
 
 function App() {
   return (
-    <BrowserRouter>
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <BrowserRouter>
         <AuthProvider>
           <TodoProvider>
             <ToastProvider>
@@ -42,8 +42,8 @@ function App() {
             </ToastProvider>
           </TodoProvider>
         </AuthProvider>
-      </GoogleOAuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 
