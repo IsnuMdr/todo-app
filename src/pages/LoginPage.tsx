@@ -91,7 +91,6 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Side - Illustration Only */}
       <div className="hidden lg:flex lg:w-1/2 bg-[#F8FAFF] items-center justify-center">
         <div className="w-full max-w-4xl">
           <img
@@ -103,8 +102,27 @@ const LoginPage = () => {
       </div>
 
       {/* Right Side - Form Section */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-xl">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white relative overflow-hidden">
+        {/* Top Right Float */}
+        <div className="absolute top-0 right-0 w-32 h-32 lg:w-40 lg:h-40 pointer-events-none">
+          <img
+            src="./float-element.png"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Bottom Left Float */}
+        <div className="absolute bottom-0 left-0 w-32 h-32 lg:w-40 lg:h-40 pointer-events-none">
+          <img
+            src="./float-element-left.png"
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Form Content */}
+        <div className="w-full max-w-xl relative z-10">
           {showNotification.message && (
             <Alert
               className="mb-3"
