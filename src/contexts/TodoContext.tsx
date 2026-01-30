@@ -12,6 +12,11 @@ export interface TodoContextType {
   createSubTodo: (todoId: string, title: string) => Todo | null;
   updateTodo: (id: string, todoData: TodoUpdateData) => Todo | null;
   deleteTodo: (id: string) => boolean;
+  updateSubTodo?: (
+    todoId: string,
+    subTodoId: string,
+    title: string,
+  ) => Todo | null;
   deleteSubTodo?: (todoId: string, subTodoId: string) => Todo | null;
   toggleTodoStatus: (id: string) => Todo | null;
   toggleSubTodoStatus?: (todoId: string, subTodoId: string) => Todo | null;
@@ -175,15 +180,21 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
       const todo = TodoService.getTodoById(todoId);
       if (!todo || !todo.subTodos) return null;
 
+      // Toggle the subTodo's completed status
       const updatedSubTodos = todo.subTodos.map((subTodo) =>
         subTodo.id === subTodoId
           ? { ...subTodo, completed: !subTodo.completed }
           : subTodo,
       );
 
+      // If any subTodo is unchecked, main todo must be unchecked
+      const allSubCompleted = updatedSubTodos.every((st) => st.completed);
+      const mainCompleted = allSubCompleted ? todo.completed : false;
+
       const updatedTodo = TodoService.updateTodo(todoId, {
         ...todo,
         subTodos: updatedSubTodos,
+        completed: mainCompleted,
       });
 
       if (updatedTodo) {
@@ -195,6 +206,29 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
       return updatedTodo;
     } catch (error) {
       console.error("Error toggling sub-todo status:", error);
+      throw error;
+    }
+  };
+
+  const updateSubTodo = (todoId: string, subTodoId: string, title: string) => {
+    try {
+      const todo = TodoService.getTodoById(todoId);
+      if (!todo || !todo.subTodos) return null;
+      const updatedSubTodos = todo.subTodos.map((subTodo) =>
+        subTodo.id === subTodoId ? { ...subTodo, title } : subTodo,
+      );
+      const updatedTodo = TodoService.updateTodo(todoId, {
+        ...todo,
+        subTodos: updatedSubTodos,
+      });
+      if (updatedTodo) {
+        setTodos((prev) =>
+          prev.map((t) => (t.id === todoId ? updatedTodo : t)),
+        );
+      }
+      return updatedTodo;
+    } catch (error) {
+      console.error("Error updating sub-todo:", error);
       throw error;
     }
   };
@@ -213,6 +247,7 @@ export const TodoProvider = ({ children }: { children: React.ReactNode }) => {
     deleteSubTodo,
     toggleTodoStatus,
     toggleSubTodoStatus,
+    updateSubTodo,
     getTodoById,
     loadTodos,
   };

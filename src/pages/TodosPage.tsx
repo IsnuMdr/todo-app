@@ -1,11 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  ConfirmDialog,
-  Modal,
-  SubTodoForm,
-  TodoCard,
-  TodoForm,
-} from "@/components";
+import { ConfirmDialog, Modal, TodoCard, TodoForm } from "@/components";
 import { Button } from "@/components/ui";
 import { useToast } from "@/hooks/useToast";
 import { Plus } from "lucide-react";
@@ -26,16 +20,23 @@ const TodoListPage = () => {
     deleteSubTodo,
     toggleTodoStatus,
     toggleSubTodoStatus,
+    updateSubTodo,
   } = useContext(TodoContext)!;
+  const handleEditSubTodo = (
+    todoId: string,
+    subTodoId: string,
+    title: string,
+  ) => {
+    if (updateSubTodo) {
+      updateSubTodo(todoId, subTodoId, title);
+      showSuccess("Subtask updated successfully!");
+    }
+  };
   const { confirm, confirmState, closeConfirm } = useConfirm();
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isSubTodoModalOpen, setIsSubTodoModalOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
-  const [selectedTodoForSubTask, setSelectedTodoForSubTask] = useState<
-    string | null
-  >(null);
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -81,18 +82,8 @@ const TodoListPage = () => {
     toggleTodoStatus(id);
   };
 
-  const handleCreateSubTodo = (parentId: string) => {
-    setSelectedTodoForSubTask(parentId);
-    setIsSubTodoModalOpen(true);
-  };
-
-  const handleSubmitSubTodo = (title: string) => {
-    if (!selectedTodoForSubTask) return;
-
-    createSubTodo(selectedTodoForSubTask, title);
-
-    setIsSubTodoModalOpen(false);
-    setSelectedTodoForSubTask(null);
+  const handleAddSubTodo = (todoId: string, title: string) => {
+    createSubTodo(todoId, title);
     showSuccess("Subtask created successfully!");
   };
 
@@ -123,8 +114,16 @@ const TodoListPage = () => {
     setIsEditModalOpen(true);
   };
 
-  const activeTodos = todos.filter((todo) => !todo.completed);
-  const checkedTodos = todos.filter((todo) => todo.completed);
+  const activeTodos = todos
+    .filter((todo) => !todo.completed)
+    .sort(
+      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
+    );
+  const checkedTodos = todos
+    .filter((todo) => todo.completed)
+    .sort(
+      (a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime(),
+    );
 
   return (
     <div>
@@ -168,9 +167,11 @@ const TodoListPage = () => {
                     onToggleComplete={handleToggleComplete}
                     onEdit={handleOpenEditModal}
                     onDelete={handleDeleteTodo}
-                    onCreateSubTodo={handleCreateSubTodo}
+                    onCreateSubTodo={() => {}}
+                    onAddSubTodo={handleAddSubTodo}
                     onToggleSubTodoComplete={handleToggleSubTodoComplete}
                     onDeleteSubTodo={handleDeleteSubTodo}
+                    onEditSubTodo={handleEditSubTodo}
                   />
                 ))
               ) : (
@@ -198,9 +199,11 @@ const TodoListPage = () => {
                     onToggleComplete={handleToggleComplete}
                     onEdit={handleOpenEditModal}
                     onDelete={handleDeleteTodo}
-                    onCreateSubTodo={handleCreateSubTodo}
+                    onCreateSubTodo={() => {}}
+                    onAddSubTodo={handleAddSubTodo}
                     onToggleSubTodoComplete={handleToggleSubTodoComplete}
                     onDeleteSubTodo={handleDeleteSubTodo}
+                    onEditSubTodo={handleEditSubTodo}
                   />
                 ))
               ) : (
@@ -250,24 +253,6 @@ const TodoListPage = () => {
             }}
           />
         )}
-      </Modal>
-
-      {/* Create SubTodo Modal */}
-      <Modal
-        isOpen={isSubTodoModalOpen}
-        onClose={() => {
-          setIsSubTodoModalOpen(false);
-          setSelectedTodoForSubTask(null);
-        }}
-        title="Create Subtask"
-      >
-        <SubTodoForm
-          onSubmit={handleSubmitSubTodo}
-          onCancel={() => {
-            setIsSubTodoModalOpen(false);
-            setSelectedTodoForSubTask(null);
-          }}
-        />
       </Modal>
 
       <ConfirmDialog
